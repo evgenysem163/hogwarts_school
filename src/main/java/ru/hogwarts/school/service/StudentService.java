@@ -38,5 +38,9 @@ public class StudentService {
               student.getAge()==age).collect(Collectors.toList());
   }
 
+  public  Collection<Student> getAll(){
+      return longStudentMap.values();
+  }
+
 }
 

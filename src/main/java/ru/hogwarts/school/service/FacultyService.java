@@ -39,6 +39,10 @@ public class FacultyService {
                         .equals(color)).collect(Collectors.toList());
     }
 
+    public Collection<Faculty> getAll(){
+        return facultyMap.values();
+    }
+
 
 
 }
