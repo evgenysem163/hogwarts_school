@@ -35,7 +35,7 @@ import java.util.List;
             return facultyService.get(id);
         }
 
-        @DeleteMapping("/{id}/id")
+        @DeleteMapping("/{id}")
         public FacultyDtoOut delete(@PathVariable("id") long id) {
             return facultyService.delete(id);
         }
