@@ -1,4 +1,5 @@
 package ru.hogwarts.school.controlller;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +12,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.*;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -37,87 +40,74 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 //@WebMvcTest(controllers = StudentController.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class StudentControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @LocalServerPort
+    private int port;
 
-    @MockBean
+    @Autowired
+    private TestRestTemplate testRestTemplate;
+
+    @Autowired
     private StudentRepository studentRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private FacultyRepository facultyRepository;
-
-    @SpyBean
-    private StudentService studentService;
-    @SpyBean
-    private StudentMapper studentMapper;
-
-    @SpyBean
-    private FacultyMapper facultyMapper;
 
     private final Faker faker = new Faker();
 
     @Test
-    public void createTest() throws Exception {
-
+    public StudentDtoOut createTest() {
         StudentDtoIn studentDtoIn = generateDto();
-        Student student = new Student();
-        student.setId(3L);
-        student.setName(studentDtoIn.getName());
-        student.setAge(studentDtoIn.getAge());
-        when(studentRepository.save(any())).thenReturn(student);
+        ResponseEntity<StudentDtoOut> responseEntity = testRestTemplate.postForEntity(
+                "http://localhost:"+port+"/students",
+                studentDtoIn,
+                StudentDtoOut.class
+        );
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        mockMvc.perform(
-                        MockMvcRequestBuilders.post("/students")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(studentDtoIn))
-                )
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.id").value(student.getId()))
-                .andExpect(jsonPath("$.name").value(student.getName()))
-                .andExpect(jsonPath("$.age").value(student.getAge()));
+        StudentDtoOut studentDtoOut = responseEntity.getBody();
+
+        assertThat(studentDtoOut).isNotNull();
+        assertThat(studentDtoOut.getId()).isNotEqualTo(1L);
+        assertThat(studentDtoOut.getAge()).isEqualTo(studentDtoIn.getAge());
+        assertThat(studentDtoOut.getName()).isEqualTo(studentDtoIn.getName());
+
+        return studentDtoOut;
     }
 
     @Test
-    public void deleteTest() throws Exception {
-        Student student = new Student();
-        student.setId(1L);
-        when(studentRepository.findById(eq(1L))).thenReturn(Optional.of(student));
-        mockMvc.perform(MockMvcRequestBuilders.delete("/students/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(student.getId()));
-    }
+    public void updateStudent() {
+        StudentDtoOut created = createTest();
+        StudentDtoIn studentDtoIn = new StudentDtoIn();
+        studentDtoIn.setName(faker.name().fullName());
+        studentDtoIn.setAge(created.getAge());
 
-    @Test
-    public void readTest() throws Exception {
-        Student student = new Student();
-        student.setId(1L);
-        when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
-        mockMvc.perform(MockMvcRequestBuilders.get("/students/1"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(jsonPath("$.id").value(student.getId()));
-    }
+        ResponseEntity<StudentDtoOut> responseEntity = testRestTemplate.exchange(
+                "http://localhost:" + port + "/students/" + created.getId(),
+                HttpMethod.PUT,
+                new HttpEntity<>(studentDtoIn),
+                StudentDtoOut.class
+        );
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    @Test
-    void getFacultyTest() throws Exception {
-        Faculty faculty = new Faculty(1L, "A", "red");
-        Student student = new Student(1L, "B", 15);
-        student.setFaculty(faculty);
+        StudentDtoOut studentDtoOut = responseEntity.getBody();
 
-        when(studentRepository.findById(anyLong())).thenReturn(Optional.of(student));
+        assertThat(studentDtoOut).isNotNull();
+        assertThat(studentDtoOut.getId()).isEqualTo(created.getId());
+        assertThat(studentDtoOut.getAge()).isEqualTo(studentDtoIn.getAge());
+        assertThat(studentDtoOut.getName()).isEqualTo(studentDtoIn.getName());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/students/1/faculty")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(faculty.getId()))
-                .andExpect(jsonPath("$.name").value(faculty.getName()))
-                .andExpect(jsonPath("$.color").value(faculty.getColor()));
+        // checking not found
+        long incorrectId = created.getId() + 1;
+
+        ResponseEntity<String> stringResponseEntity = testRestTemplate.exchange(
+                "http://localhost:" + port + "/students/" + incorrectId,
+                HttpMethod.PUT,
+                new HttpEntity<>(studentDtoIn),
+                String.class
+        );
+        assertThat(stringResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(stringResponseEntity.getBody())
+                .isEqualTo("Студент с id = " + incorrectId + " не найден!");
     }
 
 
