@@ -3,7 +3,7 @@ Content-Type: application/json
 
 {
   "name": "avatar",
-  "age": 23
+  "age": 25
 }
 
 ###
@@ -14,3 +14,5 @@ Content-Type: application/json
   "name": "Slytherin",
   "color": "black"
 }
+###
+GET http://localhost:8080/students/lastStudent

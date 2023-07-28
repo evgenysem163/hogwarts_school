@@ -3,6 +3,7 @@ package ru.hogwarts.school.mapper;
 import org.springframework.stereotype.Component;
 import ru.hogwarts.school.dto.StudentDtoIn;
 import ru.hogwarts.school.dto.StudentDtoOut;
+import ru.hogwarts.school.entity.Avatar;
 import ru.hogwarts.school.entity.Student;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -14,11 +15,13 @@ import java.util.Optional;
 
         private final FacultyMapper facultyMapper;
         private final FacultyRepository facultyRepository;
+        private final AvatarMapper avatarMapper;
 
         public StudentMapper(FacultyMapper facultyMapper,
-                             FacultyRepository facultyRepository) {
+                             FacultyRepository facultyRepository, AvatarMapper avatarMapper) {
             this.facultyMapper = facultyMapper;
             this.facultyRepository = facultyRepository;
+            this.avatarMapper = avatarMapper;
         }
 
         public StudentDtoOut toDto(Student student) {
@@ -28,6 +31,8 @@ import java.util.Optional;
             studentDtoOut.setAge(student.getAge());
             Optional.ofNullable(student.getFaculty())
                     .ifPresent(faculty -> studentDtoOut.setFaculty(facultyMapper.toDto(faculty)));
+            Optional.ofNullable(student.getAvatar())
+                    .ifPresent(avatar->studentDtoOut.setAvatar(avatarMapper.toDto((Avatar) avatar)));
             return studentDtoOut;
         }
 

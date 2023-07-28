@@ -15,18 +15,16 @@ import ru.hogwarts.school.entity.Student;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
 
 import ru.hogwarts.school.exception.StudentNotFoundException;
+import ru.hogwarts.school.mapper.AvatarMapper;
 import ru.hogwarts.school.mapper.FacultyMapper;
 import ru.hogwarts.school.mapper.StudentMapper;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class StudentService {
@@ -39,15 +37,17 @@ public class StudentService {
     private final AvatarService avatarService;
 
     private final FacultyMapper facultyMapper;
+    private final AvatarMapper avatarMapper;
 
     Logger logger = LoggerFactory.getLogger(StudentService.class);
 
-    public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository, StudentMapper studentMapper, AvatarService avatarService, FacultyMapper facultyMapper) {
+    public StudentService(StudentRepository studentRepository, FacultyRepository facultyRepository, StudentMapper studentMapper, AvatarService avatarService, FacultyMapper facultyMapper, AvatarMapper avatarMapper) {
         this.studentRepository = studentRepository;
         this.facultyRepository = facultyRepository;
         this.studentMapper = studentMapper;
         this.avatarService = avatarService;
         this.facultyMapper = facultyMapper;
+        this.avatarMapper = avatarMapper;
     }
 
     public StudentDtoOut createStudent(StudentDtoIn studentDtoIn) {
@@ -103,7 +103,7 @@ public class StudentService {
                 .orElseThrow(() -> new StudentNotFoundException(id));
         Avatar avatar = avatarService.create(student, multipartFile);
         StudentDtoOut studentDtoOut = studentMapper.toDto(student);
-        studentDtoOut.setAvatarUrl("http://localhost:8080/avatars/" + avatar.getId() + "/from-db");
+        studentDtoOut.setAvatar(avatarMapper.toDto(avatar));
         return studentDtoOut;
     }
 
@@ -116,5 +116,9 @@ public class StudentService {
     }
 
 
+    public int getCountOfStudent() {
+        return studentRepository.getCountOfStudents();
+
+    }
 
 }
