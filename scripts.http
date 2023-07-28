@@ -1,0 +1,18 @@
+POST http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "name": "avatar",
+  "age": 25
+}
+
+###
+POST http://localhost:8080/faculties
+Content-Type: application/json
+
+{
+  "name": "Slytherin",
+  "color": "black"
+}
+###
+GET http://localhost:8080/students/lastStudent
