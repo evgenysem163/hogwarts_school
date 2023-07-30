@@ -11,8 +11,19 @@ import javax.persistence.*;
         private Long id;
         private String name;
         private int age;
+        private int avatar;
 
-        @ManyToOne
+    public Student() {
+    }
+
+    public Student(Long id, String name, int age, int avatar) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.avatar = avatar;
+    }
+
+    @ManyToOne
         @JoinColumn(name = "faculty_id")
         private Faculty faculty;
 
@@ -48,7 +59,14 @@ import javax.persistence.*;
             this.faculty = faculty;
         }
 
+    public Object getAvatar() {
+        return avatar;
     }
+
+    public void setAvatar(int avatar) {
+        this.avatar = avatar;
+    }
+}
 
 
 
