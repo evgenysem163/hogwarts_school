@@ -121,4 +121,8 @@ public class StudentService {
 
     }
 
+    public double getAverageAge() {
+        return studentRepository.getAverageAge();
+    }
+
 }

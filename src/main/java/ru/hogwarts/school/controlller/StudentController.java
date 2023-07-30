@@ -65,17 +65,17 @@ public class StudentController {
     public int getCountOfStudent(){
         return studentService.getCountOfStudent();
     }
-//    @GetMapping("/averageAge")
-//    public double getAverageAge(){
-//        return studentService.getAverageAge();
-//    }
-//    @GetMapping("/lastStudent")
-//    public List<StudentDtoOut> getLastStudents(@RequestParam(value =
-//            "count", defaultValue = "5", required = false) int count){
-//        return studentService.getLastStudents(Math.abs(count));
+    @GetMapping("/averageAge")
+    public double getAverageAge(){
+        return studentService.getAverageAge();
+    }
+    @GetMapping("/lastStudent")
+    public List<StudentDtoOut> getLastStudents(@RequestParam(value =
+            "count", defaultValue = "5", required = false) int count){
+        return studentService.getLastStudents(Math.abs(count));
 
     }
 
-//}
+}
 
 
