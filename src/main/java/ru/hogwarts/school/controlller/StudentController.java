@@ -53,6 +53,21 @@ public class StudentController {
         return studentService.findFaculty(id);
     }
 
+
+    @GetMapping("/name")
+    public List<String> nameToUpperCase(){
+        return studentService.nameToUpperCase();
+    }
+
+    @GetMapping("/avg-age")
+    public double avgAge(){
+        return studentService.avgAge();
+    }
+
+    @GetMapping("/fast")
+        public Integer fast(){
+            return studentService.fast();
+    }
 }
 
 

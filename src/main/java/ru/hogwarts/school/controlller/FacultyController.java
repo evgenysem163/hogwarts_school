@@ -56,6 +56,11 @@ public class FacultyController {
         return facultyService.findStudents(id);
     }
 
+    @GetMapping("/longLength/{chars}")
+    public List<String> longLength(@PathVariable Character chars){
+        return facultyService.longLength(chars);
+    }
+
 }
 
 

@@ -18,11 +18,13 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import javax.transaction.Transactional;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-    @Service
+@Service
     public class StudentService {
         private static final Logger LOG = LoggerFactory.getLogger(StudentService.class);
 
@@ -106,31 +108,32 @@ import java.util.stream.Collectors;
                     .map(facultyMapper::toDto)
                     .orElseThrow(() -> new StudentNotFoundException(id));
         }
-//        public StudentDtoOut uploadAvatar(long id, MultipartFile multipartFile){
-//            LOG.info("Was invoked method uploadAvatar");
-//            Student student = studentRepository.findById(id)
-//                    .orElseThrow(()->new StudentNotFoundException(id);
-//                    avatarService.create(student, multipartFile);
-//                    return studentMapper.toDto(student);
-//        }
-//        public  int getCountOfStudents(){
-//            LOG.info("Was invoked method getCountOfStudents");
-//            return studentRepository.getCountOfStudents();
 
-//    }
+        public List<String> nameToUpperCase() {
+            return studentRepository.findAll()
+                    .stream()
+                    .sorted(Comparator.comparing(Student::getName))
+                    .map(n -> n.getName().toUpperCase())
+                    .collect(Collectors.toList());
+        }
 
-//    public  double getAverageAge(){
-//        LOG.info("Was invoked method getAverageAge");
-//        return studentRepository.getAverageAge;
-//
-//    }
-//
-//        @Transactional(readOnly = true)
-//        public List<StudentDtoOut>getLastStudents(int count){
-//        LOG.info("Was invoked method getLastStudents");
-//            return studentRepository.getLastStudents(Pageable.ofSize(count)).stream()
-//                    .map(studentMapper::toDto)
-//                    .collect(Collectors.toList());
-//        }
 
+        public double avgAge() {
+            return studentRepository.findAll()
+                    .stream()
+                    .mapToInt(Student::getAge)
+                    .average()
+                    .orElse(0.0);
+        }
+
+
+        public Integer fast() {
+            int sum = 0;
+            sum = Stream.iterate(1, a -> a + 1).parallel().limit(1_000_000).reduce(0, (a, b) -> a + b);
+            System.currentTimeMillis();
+         return sum;
+         // Без паралели работает быстрее чем с ней
+            // c parallel 419ms
+            // без parallel 397ms
+        }
     }
