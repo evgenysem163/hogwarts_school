@@ -1,4 +1,4 @@
---liquibase formatted sql
+-- liquibase formatted sql
 
 --changeset avtor:1
 CREATE INDEX IDX_students_name ON students (name);
