@@ -10,52 +10,57 @@ import java.util.List;
 
 
 @RestController
-    @RequestMapping("/faculties")
+@RequestMapping("/faculties")
 
-    public class FacultyController {
+public class FacultyController {
 
-        private final FacultyService facultyService;
+    private final FacultyService facultyService;
 
-        public FacultyController(FacultyService facultyService) {
-            this.facultyService = facultyService;
-        }
-
-        @PostMapping
-        public FacultyDtoOut create(@RequestBody FacultyDtoIn facultyDtoIn) {
-            return facultyService.create(facultyDtoIn);
-        }
-
-        @PutMapping("/{id}")
-        public FacultyDtoOut update(@PathVariable("id") long id, @RequestBody FacultyDtoIn facultyDtoIn) {
-            return facultyService.update(id, facultyDtoIn);
-        }
-
-        @GetMapping("/{id}")
-        public FacultyDtoOut get(@PathVariable("id") long id) {
-            return facultyService.get(id);
-        }
-
-        @DeleteMapping("/{id}")
-        public FacultyDtoOut delete(@PathVariable("id") long id) {
-            return facultyService.delete(id);
-        }
-
-        @GetMapping
-        public List<FacultyDtoOut> findAll(@RequestParam(required = false) String color) {
-            return facultyService.findAll(color);
-        }
-
-        @GetMapping("/filter")
-        public List<FacultyDtoOut> findByColorOrName(@RequestParam String colorOrName) {
-            return facultyService.findByColorOrName(colorOrName);
-        }
-
-        @GetMapping("/{id}/students")
-        public List<StudentDtoOut> findStudents(@PathVariable("id") long id) {
-
-            return facultyService.findStudents(id);
-        }
-
+    public FacultyController(FacultyService facultyService) {
+        this.facultyService = facultyService;
     }
+
+    @PostMapping
+    public FacultyDtoOut create(@RequestBody FacultyDtoIn facultyDtoIn) {
+        return facultyService.create(facultyDtoIn);
+    }
+
+    @PutMapping("/{id}")
+    public FacultyDtoOut update(@PathVariable("id") long id, @RequestBody FacultyDtoIn facultyDtoIn) {
+        return facultyService.update(id, facultyDtoIn);
+    }
+
+    @GetMapping("/{id}")
+    public FacultyDtoOut get(@PathVariable("id") long id) {
+        return facultyService.get(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public FacultyDtoOut delete(@PathVariable("id") long id) {
+        return facultyService.delete(id);
+    }
+
+    @GetMapping
+    public List<FacultyDtoOut> findAll(@RequestParam(required = false) String color) {
+        return facultyService.findAll(color);
+    }
+
+    @GetMapping("/filter")
+    public List<FacultyDtoOut> findByColorOrName(@RequestParam String colorOrName) {
+        return facultyService.findByColorOrName(colorOrName);
+    }
+
+    @GetMapping("/{id}/students")
+    public List<StudentDtoOut> findStudents(@PathVariable("id") long id) {
+
+        return facultyService.findStudents(id);
+    }
+
+    @GetMapping("/longLength/{chars}")
+    public List<String> longLength(@PathVariable Character chars){
+        return facultyService.longLength(chars);
+    }
+
+}
 
 

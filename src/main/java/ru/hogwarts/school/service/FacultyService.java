@@ -88,6 +88,13 @@ import java.util.stream.Collectors;
                     .collect(Collectors.toList());
         }
 
+        public List<String> longLength(Character chars) {
+            return facultyRepository.findAll()
+                    .stream()
+                    .filter(n ->n.getName().charAt(0) == chars)
+                    .map(Faculty::getName)
+                    .collect(Collectors.toList());
+        }
     }
 
 
