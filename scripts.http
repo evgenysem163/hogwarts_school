@@ -10,3 +10,12 @@ Content-Type: application/json
   "name": "Geogrfy",
   "color": "black"
 }
+
+###
+POST http://localhost:8080/students
+Content-Type: application/json
+
+{
+  "name": "Geogrfy",
+  "age": 23
+}

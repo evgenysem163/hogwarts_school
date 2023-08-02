@@ -68,6 +68,15 @@ public class StudentController {
         public Integer fast(){
             return studentService.fast();
     }
+    @GetMapping("/firstThread")
+    public void firstThread(){
+        studentService.firstThread();
+    }
+
+    @GetMapping("/twoThreadAsync")
+    public void twoThreadAsync(){
+        studentService.twoThreadAsync();
+    }
 }
 
 

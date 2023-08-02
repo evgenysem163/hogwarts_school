@@ -12,7 +12,17 @@ import javax.persistence.*;
         private String name;
         private int age;
 
-        @ManyToOne
+    public Student(Long id, String name, int age, Faculty faculty) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+        this.faculty = faculty;
+    }
+
+    public Student() {
+    }
+
+    @ManyToOne
         @JoinColumn(name = "faculty_id")
         private Faculty faculty;
 
@@ -48,7 +58,16 @@ import javax.persistence.*;
             this.faculty = faculty;
         }
 
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", faculty=" + faculty +
+                '}';
     }
+}
 
 
 
